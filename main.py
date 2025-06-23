@@ -10,9 +10,7 @@ app = FastAPI()
 @app.get('/') 
 def index():
     return {
-        "return Json object" : {
-            'message' : 'Hello i am learning FastApi'
-        }
+        'data' : "blog list"
     }
 
 
@@ -33,6 +31,26 @@ def anythingnamecanbeused():
         }
     }
 
+@app.get('/blog/{blogId}')
+def getSingleBlog(blogId:int):
+    # fetch blog with id == blogId
+    return {
+        'data':f'fetch single blog with id: {blogId}'
+    }
+
+
+
+@app.get('/blog/{id}/comments') # the id always be string but when except through function saying that its int
+def getSingleBlog(id : int):
+    # fetch blog comment with id == id
+    return {
+        'data':{
+            f'fetch blog comments with id: {id}',
+            id
+        }
+    }
+
+
 
 # 1. ------> path or endpoint
 # ('/')
@@ -50,3 +68,7 @@ def anythingnamecanbeused():
 
 # 4. ------> path operation decorator
 # @app.get('/')
+
+
+# 1. How create Routes
+# 2. Path Parameter (dynamic routes params)
