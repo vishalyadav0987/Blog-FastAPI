@@ -7,7 +7,7 @@ app = FastAPI()
 # command : uvicorn file-name:app(instance-name) --reload
 # Actual Commmand: uvicorn main:app --reload like nodemon
 
-@app.get('/')
+@app.get('/') 
 def index():
     return {
         "return Json object" : {
@@ -32,3 +32,21 @@ def anythingnamecanbeused():
             'message' : 'contact page'
         }
     }
+
+
+# 1. ------> path or endpoint
+# ('/')
+
+# 2. ------> operation or method
+# ('get')
+
+# 3. ------> path operation function
+# def index():
+#     return {
+#         "return Json object" : {
+#             'message' : 'These another route using FastApi'
+#         }
+#     }
+
+# 4. ------> path operation decorator
+# @app.get('/')
