@@ -9,4 +9,8 @@ app = FastAPI()
 
 @app.get('/')
 def index():
-    return 'Hello i am learning FastApi'
+    return {
+        "return Json object" : {
+            'message' : 'Hello i am learning FastApi'
+        }
+    }
