@@ -14,3 +14,21 @@ def index():
             'message' : 'Hello i am learning FastApi'
         }
     }
+
+
+@app.get('/about')
+def index():
+    return {
+        "return Json object" : {
+            'message' : 'These another route using FastApi'
+        }
+    }
+
+
+@app.get('/contact')
+def anythingnamecanbeused():
+    return {
+        "return Json object" : {
+            'message' : 'contact page'
+        }
+    }
