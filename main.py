@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from typing import Optional
 
 
 app = FastAPI()
@@ -7,11 +8,19 @@ app = FastAPI()
 # command : uvicorn file-name:app(instance-name) --reload
 # Actual Commmand: uvicorn main:app --reload like nodemon
 
-@app.get('/') 
-def index():
-    return {
-        'data' : "blog list"
-    }
+@app.get('/blog') 
+# def index(limit:int = 10, published:Optional[bool] = None, sort:Optional[str] = None):
+def index(limit:int = 10, published:bool = False, sort:Optional[str] = None):
+    # return a list of blogs
+    # return published # without giving any data type it will take it as string
+    if published:
+        return {
+            'data':f'{limit} published blogs from database'
+        }
+    else:
+        return {
+            'data' : f'{limit} unpublished blogs from database'
+        }
 
 
 @app.get('/about')
@@ -73,3 +82,4 @@ def getSingleBlog(id : int):
 # 1. How create Routes
 # 2. Path Parameter (dynamic routes params)
 # 3. API Documentation -- Swagger UI
+# 4. Query Parameters (?limit=5&pages=2)
