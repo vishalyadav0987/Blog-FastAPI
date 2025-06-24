@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from typing import Optional
+from pydantic import BaseModel
+import uvicorn
 
 
 app = FastAPI()
@@ -59,6 +61,30 @@ def getSingleBlog(id : int):
         }
     }
 
+# Creating here pydantic mode
+# Schema -------
+class Blog(BaseModel):
+    title:str
+    content:str
+    published:Optional[bool]
+
+# Schema -------
+
+
+@app.post('/create-blog')
+def createBlog(req:Blog): # req == request is the name of the object
+    return {
+        'data':{
+            'blog':req,
+            'message': f'Blog created successfully with title as {req.title}'
+            }
+        }
+
+
+
+# This is the main function these are the entry point of the application used to run the application on the server on which it is deployed on different port
+# if __name__ == '__main__':
+#     uvicorn.run(app,host='127.0.0.1',port=9000);
 
 
 # 1. ------> path or endpoint
@@ -83,3 +109,4 @@ def getSingleBlog(id : int):
 # 2. Path Parameter (dynamic routes params)
 # 3. API Documentation -- Swagger UI
 # 4. Query Parameters (?limit=5&pages=2)
+# 5. Request Body (JSON) (req.body in node.js)
