@@ -72,3 +72,4 @@ def getSingleBlog(id : int):
 
 # 1. How create Routes
 # 2. Path Parameter (dynamic routes params)
+# 3. API Documentation -- Swagger UI
