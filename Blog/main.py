@@ -42,7 +42,7 @@ def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of par
 
 
 
-@app.get('/blog',status_code=status.HTTP_200_OK)
+@app.get('/blog',status_code=status.HTTP_200_OK,response_model=list[schemas.ResponseModel])
 def get_all_blog(db:Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
@@ -50,7 +50,7 @@ def get_all_blog(db:Session = Depends(get_db)):
 
 
 
-@app.get('/blog/{blogId}',status_code=status.HTTP_200_OK)
+@app.get('/blog/{blogId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModel)
 def get_single_blog(blogId:int,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
@@ -108,3 +108,6 @@ def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
 # 9. Exception Code & Status Code
 # 10. Delete a Blog
 # 11. Update a Blog
+# 12. Response Model (Schema --> How i take response from API)
+# Note : pydantic model ==== schemas
+# Note:  SqlAlchemy Model === models
