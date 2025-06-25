@@ -2,6 +2,7 @@ from fastapi import FastAPI,Depends,HTTPException,status
 from . import schemas , models
 from .database import engine ,SessionLocal
 from sqlalchemy.orm import Session
+from .hashing import Hash
 
 app = FastAPI()
 
@@ -103,7 +104,8 @@ def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
 
 @app.post('/create-user',status_code=status.HTTP_201_CREATED)
 def create_user(req:schemas.User,db:Session = Depends(get_db)):
-    new_user = models.User( name=req.name, email=req.email, password=req.password)
+    hashPassword = Hash.bcrypt(req.password)
+    new_user = models.User( name=req.name, email=req.email, password=hashPassword)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -123,3 +125,4 @@ def create_user(req:schemas.User,db:Session = Depends(get_db)):
 # Note : pydantic model ==== schemas
 # Note:  SqlAlchemy Model === models
 # 13. Create User 
+# 14. Hashing Password
