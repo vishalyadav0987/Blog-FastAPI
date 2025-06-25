@@ -97,6 +97,17 @@ def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
         },synchronize_session=False)
         db.commit()
         return {"message":"Blog updated successfully"}
+    
+
+
+
+@app.post('/create-user',status_code=status.HTTP_201_CREATED)
+def create_user(req:schemas.User,db:Session = Depends(get_db)):
+    new_user = models.User( name=req.name, email=req.email, password=req.password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message":"User created successfully" , "user":new_user}
 
 
 
@@ -111,3 +122,4 @@ def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
 # 12. Response Model (Schema --> How i take response from API)
 # Note : pydantic model ==== schemas
 # Note:  SqlAlchemy Model === models
+# 13. Create User 

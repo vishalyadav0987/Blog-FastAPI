@@ -7,6 +7,13 @@ class Blog(BaseModel):
 
 
 
+class User(BaseModel):
+    name:str
+    email:str
+    password:str
+
+
+
 class ResponseModel(BaseModel):
     title:str
     content:str
