@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Depends
+from fastapi import FastAPI,Depends,HTTPException,status
 from . import schemas , models
 from .database import engine ,SessionLocal
 from sqlalchemy.orm import Session
@@ -26,7 +26,7 @@ def get_db():
 
 
 
-@app.post('/create-blog')
+@app.post('/create-blog',status_code=status.HTTP_201_CREATED)
 # def create_blog(title,content): # instead of paramter we use pydantic model for req.body
 def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of paramter we use pydantic model for req.body
     new_blog = models.Blog(title=req.title,content=req.content)
@@ -42,12 +42,24 @@ def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of par
 
 
 
-@app.get('/blog')
+@app.get('/blog',status_code=status.HTTP_200_OK)
 def get_all_blog(db:Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
+
+
+@app.get('/blog/{blogId}',status_code=status.HTTP_200_OK)
+def get_single_blog(blogId:int,db:Session = Depends(get_db)):
+    blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")
+    return blog
+# we use here "HTTPException" because we want to return 404 status code
+
+
 # 6. Pydantic Model (Schema) Note: FastAPI doesn't require you to use a SQL(relational) DB] but i can use any relationalDB
 # 7. Connecting to DB
 # 8. Models & Tables
+# 9. Exception Code & Status Code
