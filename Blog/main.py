@@ -61,7 +61,7 @@ def get_single_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 
-@app.delete('/delete-blog',status_code=status.HTTP_200_OK)
+@app.delete('/delete-blog',status_code=status.HTTP_204_NO_CONTENT)
 def delete_blog(blogId:int,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
@@ -83,8 +83,28 @@ def delete_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 
+
+
+@app.put('/update-blog/{blogId}',status_code=status.HTTP_202_ACCEPTED)
+def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
+    blog = db.query(models.Blog).filter(models.Blog.id==blogId)
+    if not blog.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")
+    else:
+        db.query(models.Blog).filter(models.Blog.id==blogId).update({
+            models.Blog.title:req.title,
+            models.Blog.content:req.content
+        },synchronize_session=False)
+        db.commit()
+        return {"message":"Blog updated successfully"}
+
+
+
+
+
 # 6. Pydantic Model (Schema) Note: FastAPI doesn't require you to use a SQL(relational) DB] but i can use any relationalDB
 # 7. Connecting to DB
 # 8. Models & Tables
 # 9. Exception Code & Status Code
 # 10. Delete a Blog
+# 11. Update a Blog
