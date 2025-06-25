@@ -41,6 +41,13 @@ def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of par
 # but we work with pydantic things
 
 
+
+@app.get('/blog')
+def get_all_blog(db:Session = Depends(get_db)):
+    blogs = db.query(models.Blog).all()
+    return blogs
+
+
 # 6. Pydantic Model (Schema) Note: FastAPI doesn't require you to use a SQL(relational) DB] but i can use any relationalDB
 # 7. Connecting to DB
 # 8. Models & Tables
