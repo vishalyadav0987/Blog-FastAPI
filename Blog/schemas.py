@@ -6,7 +6,11 @@ class Blog(BaseModel):
     title:str
     content:str
 
-
+class ResponseModelUserForFecthingBlog(BaseModel):
+    name:str
+    email:str
+    class Config():
+        from_attributes = True
 class ResponseModelUser(BaseModel):
     name:str
     email:str
@@ -19,7 +23,7 @@ class ResponseModelUser(BaseModel):
 class ResponseModel(BaseModel):
     title:str
     content:str
-    user:ResponseModelUser
+    user:ResponseModelUserForFecthingBlog
     class Config():
         from_attributes = True
 
