@@ -1,8 +1,7 @@
-from fastapi import FastAPI,Depends,HTTPException,status
-from . import schemas , models
-from .database import engine ,SessionLocal
-from sqlalchemy.orm import Session
-from .hashing import Hash
+from fastapi import FastAPI
+from . import  models
+from .database import engine 
+from .router import blogRoutes,userRoutes
 
 app = FastAPI()
 
@@ -17,113 +16,8 @@ models.Base.metadata.create_all(engine)
 # (Won’t drop/overwrite existing ones, just fills in the missing stuff) 🤝
 
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close() # fi everthing is done
-
-
-
-@app.post('/create-blog',status_code=status.HTTP_201_CREATED,tags=['Blogs'])
-# def create_blog(title,content): # instead of paramter we use pydantic model for req.body
-def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of paramter we use pydantic model for req.body
-    new_blog = models.Blog(title=req.title,content=req.content,user_id=1)
-    db.add(new_blog)
-    db.commit()
-    db.refresh(new_blog)
-    return new_blog
-
-# when we only "db" they act like as query param but these is session type
-# db:Session giving sesstion type but it "depends" on pydantics things
-# we use here "depends" here because "Session" is orm part
-# but we work with pydantic things
-
-
-
-@app.get('/blog',status_code=status.HTTP_200_OK,response_model=list[schemas.ResponseModel],tags=['Blogs'])
-def get_all_blog(db:Session = Depends(get_db)):
-    blogs = db.query(models.Blog).all()
-    return blogs
-
-
-
-
-@app.get('/blog/{blogId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModel,tags=['Blogs'])
-def get_single_blog(blogId:int,db:Session = Depends(get_db)):
-    blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
-    if not blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")
-    return blog
-# we use here "HTTPException" because we want to return 404 status code
-
-
-
-
-@app.delete('/delete-blog',status_code=status.HTTP_204_NO_CONTENT,tags=['Blogs'])
-def delete_blog(blogId:int,db:Session = Depends(get_db)):
-    blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
-    if not blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")
-    db.query(models.Blog).filter(models.Blog.id == blogId).delete(synchronize_session=False)
-    db.commit()
-    return {"message":"Blog deleted successfully"} 
-# we use here "HTTPException" because we want to return 404 status code
-# we use here "synchronize_session=False" because we want to delete the blog from database
-# and we don't want to update the session
-# 1️⃣  Session खोलो
-# 2️⃣  मान लो पहले कुछ users बनाकर commit कर चुके हो…
-# 3️⃣  अब user id == 5 डिलीट करना है
-# 4️⃣  user id == 5 को delete करो
-# 5️⃣  जहाँ id 5 है
-# 6️⃣  DELETE statement रन करो
-# 7️⃣  session को अभी न छेड़ो
-# 8️⃣  matlab ye hai ki session ko abhi kuch mat kar phle jo dlete kra usko commit kro aur refresh kar do takki session up to date ho jaye
-
-
-
-
-
-@app.put('/update-blog/{blogId}',status_code=status.HTTP_202_ACCEPTED,tags=['Blogs'])
-def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
-    blog = db.query(models.Blog).filter(models.Blog.id==blogId)
-    if not blog.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")
-    else:
-        db.query(models.Blog).filter(models.Blog.id==blogId).update({
-            models.Blog.title:req.title,
-            models.Blog.content:req.content
-        },synchronize_session=False)
-        db.commit()
-        return {"message":"Blog updated successfully"}
-    
-
-
-
-@app.post('/create-user',status_code=status.HTTP_201_CREATED,tags=['User'])
-def create_user(req:schemas.User,db:Session = Depends(get_db)):
-    hashPassword = Hash.bcrypt(req.password)
-    new_user = models.User( name=req.name, email=req.email, password=hashPassword)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return {"message":"User created successfully" , "user":new_user}
-
-
-
-
-@app.get('/user/{userId}',status_code=status.HTTP_200_OK,tags=['User'],response_model=schemas.ResponseModelUser)
-def get_single_blog(userId:int,db:Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == userId).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="user not found")
-    return user
-# we use here "HTTPException" because we want to return 404 status code
-
-
-
+app.include_router(blogRoutes.router)
+app.include_router(userRoutes.router)
 
 
 # 6. Pydantic Model (Schema) Note: FastAPI doesn't require you to use a SQL(relational) DB] but i can use any relationalDB
@@ -140,3 +34,4 @@ def get_single_blog(userId:int,db:Session = Depends(get_db)):
 # 15. Fetch Single User
 # 16. Using Docs tages
 # 17. Relationship (kis user ne blog banaya hai ush user ki info ko populate karna hai)
+# 18. API Router (Refactor the Code Files base)

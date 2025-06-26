@@ -41,5 +41,15 @@ SessionLocal = sessionmaker(
 
 # Generate a base class for declarative models.
 # Every ORM model (e.g., User, Post, Comment) should inherit from this Base
-# so SQLAlchemy can collect metadata and map classes to tables.
+# so SQLAlchemy can collect metadata and map classes to tables
+
 Base = declarative_base()
+
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close() # fi everthing is done
