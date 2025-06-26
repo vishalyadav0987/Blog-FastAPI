@@ -27,7 +27,7 @@ def get_db():
 
 
 
-@app.post('/create-blog',status_code=status.HTTP_201_CREATED)
+@app.post('/create-blog',status_code=status.HTTP_201_CREATED,tags=['Blogs'])
 # def create_blog(title,content): # instead of paramter we use pydantic model for req.body
 def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of paramter we use pydantic model for req.body
     new_blog = models.Blog(title=req.title,content=req.content)
@@ -43,7 +43,7 @@ def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of par
 
 
 
-@app.get('/blog',status_code=status.HTTP_200_OK,response_model=list[schemas.ResponseModel])
+@app.get('/blog',status_code=status.HTTP_200_OK,response_model=list[schemas.ResponseModel],tags=['Blogs'])
 def get_all_blog(db:Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
@@ -51,7 +51,7 @@ def get_all_blog(db:Session = Depends(get_db)):
 
 
 
-@app.get('/blog/{blogId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModel)
+@app.get('/blog/{blogId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModel,tags=['Blogs'])
 def get_single_blog(blogId:int,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
@@ -62,7 +62,7 @@ def get_single_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 
-@app.delete('/delete-blog',status_code=status.HTTP_204_NO_CONTENT)
+@app.delete('/delete-blog',status_code=status.HTTP_204_NO_CONTENT,tags=['Blogs'])
 def delete_blog(blogId:int,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
@@ -86,7 +86,7 @@ def delete_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 
-@app.put('/update-blog/{blogId}',status_code=status.HTTP_202_ACCEPTED)
+@app.put('/update-blog/{blogId}',status_code=status.HTTP_202_ACCEPTED,tags=['Blogs'])
 def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==blogId)
     if not blog.first():
@@ -102,7 +102,7 @@ def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
 
 
 
-@app.post('/create-user',status_code=status.HTTP_201_CREATED)
+@app.post('/create-user',status_code=status.HTTP_201_CREATED,tags=['User'])
 def create_user(req:schemas.User,db:Session = Depends(get_db)):
     hashPassword = Hash.bcrypt(req.password)
     new_user = models.User( name=req.name, email=req.email, password=hashPassword)
@@ -126,3 +126,5 @@ def create_user(req:schemas.User,db:Session = Depends(get_db)):
 # Note:  SqlAlchemy Model === models
 # 13. Create User 
 # 14. Hashing Password
+# 15. Fetch Single User
+# 16. Using Docs tages
