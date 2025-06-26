@@ -16,8 +16,8 @@ models.Base.metadata.create_all(engine)
 # (Won’t drop/overwrite existing ones, just fills in the missing stuff) 🤝
 
 
-app.include_router(blogRoutes.router)
 app.include_router(userRoutes.router)
+app.include_router(blogRoutes.router)
 
 
 # 6. Pydantic Model (Schema) Note: FastAPI doesn't require you to use a SQL(relational) DB] but i can use any relationalDB
@@ -36,3 +36,4 @@ app.include_router(userRoutes.router)
 # 17. Relationship (kis user ne blog banaya hai ush user ki info ko populate karna hai)
 # 18. API Router (Refactor the Code Files base)
 # 19. API Router Operation (APIRouter(prefix,tags))
+# 20. Login and Verify User

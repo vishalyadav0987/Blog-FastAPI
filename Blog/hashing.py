@@ -49,3 +49,6 @@ class Hash:
         #    • bcrypt algorithm se hash banata hai
         #    • final string return karta hai
         return pwd_cxt.hash(password)
+    
+    def verify(userPassword,password):
+        return pwd_cxt.verify(userPassword,password)
