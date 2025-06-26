@@ -110,3 +110,4 @@ def createBlog(req:Blog): # req == request is the name of the object
 # 3. API Documentation -- Swagger UI
 # 4. Query Parameters (?limit=5&pages=2)
 # 5. Request Body (JSON) (req.body in node.js)
+# 6. Pydantic Model (Schema) Note: FastAPI doesn't require you to use a SQL(relational) DB] but i can use any relationalDB

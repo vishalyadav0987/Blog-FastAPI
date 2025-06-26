@@ -5,6 +5,7 @@ from ..database import get_db
 from sqlalchemy.orm import Session
 from ..hashing import Hash
 from .. import generate_token
+from fastapi.security import  OAuth2PasswordRequestForm
 
 
 router = APIRouter(
@@ -27,8 +28,9 @@ def create_user(req:schemas.User,db:Session = Depends(get_db)):
 
 
 @router.post('/login',status_code=status.HTTP_200_OK)
-def login_user(req:schemas.Login,db:Session=Depends(get_db)):
+def login_user(req:OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == req.username).first()
+    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid Crendentails")
     if not Hash.verify(req.password,user.password):

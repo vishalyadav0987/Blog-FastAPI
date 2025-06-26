@@ -3,6 +3,7 @@ from .. import schemas
 from .. import schemas , models
 from ..database import get_db
 from sqlalchemy.orm import Session
+from .. import oauth2
 
 
 router = APIRouter(
@@ -16,7 +17,7 @@ router = APIRouter(
 
 @router.post('/create',status_code=status.HTTP_201_CREATED)
 # def create_blog(title,content): # instead of paramter we use pydantic model for req.body
-def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of paramter we use pydantic model for req.body
+def create_blog(req:schemas.Blog,db:Session = Depends(get_db),current_user:schemas.User = Depends(oauth2.get_current_user)): # instead of paramter we use pydantic model for req.body
     new_blog = models.Blog(title=req.title,content=req.content,user_id=1)
     db.add(new_blog)
     db.commit()
@@ -39,7 +40,7 @@ def get_all_blog(db:Session = Depends(get_db)):
 
 
 @router.get('/{blogId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModel)
-def get_single_blog(blogId:int,db:Session = Depends(get_db)):
+def get_single_blog(blogId:int,db:Session = Depends(get_db),current_user:schemas.User = Depends(oauth2.get_current_user)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")
@@ -50,7 +51,7 @@ def get_single_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 @router.delete('/delete/{blogId}',status_code=status.HTTP_204_NO_CONTENT)
-def delete_blog(blogId:int,db:Session = Depends(get_db)):
+def delete_blog(blogId:int,db:Session = Depends(get_db),current_user:schemas.User = Depends(oauth2.get_current_user)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")
@@ -74,7 +75,7 @@ def delete_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 @router.put('/update/{blogId}',status_code=status.HTTP_202_ACCEPTED)
-def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
+def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db),current_user:schemas.User = Depends(oauth2.get_current_user)):
     blog = db.query(models.Blog).filter(models.Blog.id==blogId)
     if not blog.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog not found")

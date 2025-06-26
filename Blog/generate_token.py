@@ -6,7 +6,8 @@ from typing import Optional
 from datetime import datetime, timedelta
 
 # JOSE: JSON Object Signing and Encryption (JWT library)
-from jose import jwt
+from jose import jwt ,JWTError
+from . import schemas
 
 # ------------------------------------------------------------
 # 🔐 Secret key for signing JWTs – should be kept secret!
@@ -48,3 +49,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
     # 🚀 Return the final token string
     return encoded_jwt
+
+
+def verify_token(token:str,credentials_exception):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email:str = payload.get("sub")
+        print(email)
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(email=email)
+    except JWTError:
+        raise credentials_exception

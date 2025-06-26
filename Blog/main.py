@@ -38,3 +38,4 @@ app.include_router(blogRoutes.router)
 # 19. API Router Operation (APIRouter(prefix,tags))
 # 20. Login and Verify User
 # 21. JWT (JSON Web Token)
+# 22. JWT Authentication (Middelware if you authentcate the use api or access the site)
