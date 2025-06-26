@@ -30,7 +30,7 @@ def get_db():
 @app.post('/create-blog',status_code=status.HTTP_201_CREATED,tags=['Blogs'])
 # def create_blog(title,content): # instead of paramter we use pydantic model for req.body
 def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of paramter we use pydantic model for req.body
-    new_blog = models.Blog(title=req.title,content=req.content)
+    new_blog = models.Blog(title=req.title,content=req.content,user_id=1)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
@@ -114,6 +114,17 @@ def create_user(req:schemas.User,db:Session = Depends(get_db)):
 
 
 
+@app.get('/user/{userId}',status_code=status.HTTP_200_OK,tags=['User'],response_model=schemas.ResponseModelUser)
+def get_single_blog(userId:int,db:Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == userId).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="user not found")
+    return user
+# we use here "HTTPException" because we want to return 404 status code
+
+
+
+
 
 # 6. Pydantic Model (Schema) Note: FastAPI doesn't require you to use a SQL(relational) DB] but i can use any relationalDB
 # 7. Connecting to DB
@@ -128,3 +139,4 @@ def create_user(req:schemas.User,db:Session = Depends(get_db)):
 # 14. Hashing Password
 # 15. Fetch Single User
 # 16. Using Docs tages
+# 17. Relationship (kis user ne blog banaya hai ush user ki info ko populate karna hai)
