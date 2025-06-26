@@ -37,3 +37,4 @@ app.include_router(blogRoutes.router)
 # 18. API Router (Refactor the Code Files base)
 # 19. API Router Operation (APIRouter(prefix,tags))
 # 20. Login and Verify User
+# 21. JWT (JSON Web Token)

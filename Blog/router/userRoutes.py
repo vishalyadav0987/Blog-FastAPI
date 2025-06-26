@@ -4,6 +4,7 @@ from .. import schemas , models
 from ..database import get_db
 from sqlalchemy.orm import Session
 from ..hashing import Hash
+from .. import generate_token
 
 
 router = APIRouter(
@@ -32,7 +33,11 @@ def login_user(req:schemas.Login,db:Session=Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid Crendentails")
     if not Hash.verify(req.password,user.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid Crendentails")
-    return {"message":"User logged in successfully"}
+    access_token = generate_token.create_access_token(data={'sub':user.email})
+    return {
+        "access_token":access_token,
+        "token_type":"bearer"
+    }
 
 
 
