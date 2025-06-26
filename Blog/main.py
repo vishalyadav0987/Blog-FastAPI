@@ -35,3 +35,4 @@ app.include_router(userRoutes.router)
 # 16. Using Docs tages
 # 17. Relationship (kis user ne blog banaya hai ush user ki info ko populate karna hai)
 # 18. API Router (Refactor the Code Files base)
+# 19. API Router Operation (APIRouter(prefix,tags))

@@ -5,13 +5,16 @@ from ..database import get_db
 from sqlalchemy.orm import Session
 
 
-router = APIRouter()
+router = APIRouter(
+    tags=['Blogs Routes'],
+    prefix='/blog',
+)
 
 
 
 
 
-@router.post('/create-blog',status_code=status.HTTP_201_CREATED,tags=['Blogs'])
+@router.post('/create',status_code=status.HTTP_201_CREATED)
 # def create_blog(title,content): # instead of paramter we use pydantic model for req.body
 def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of paramter we use pydantic model for req.body
     new_blog = models.Blog(title=req.title,content=req.content,user_id=1)
@@ -27,7 +30,7 @@ def create_blog(req:schemas.Blog,db:Session = Depends(get_db)): # instead of par
 
 
 
-@router.get('/blog',status_code=status.HTTP_200_OK,response_model=list[schemas.ResponseModel],tags=['Blogs'])
+@router.get('/all',status_code=status.HTTP_200_OK,response_model=list[schemas.ResponseModel])
 def get_all_blog(db:Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
@@ -35,7 +38,7 @@ def get_all_blog(db:Session = Depends(get_db)):
 
 
 
-@router.get('/blog/{blogId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModel,tags=['Blogs'])
+@router.get('/{blogId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModel)
 def get_single_blog(blogId:int,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
@@ -46,7 +49,7 @@ def get_single_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 
-@router.delete('/delete-blog',status_code=status.HTTP_204_NO_CONTENT,tags=['Blogs'])
+@router.delete('/delete/{blogId}',status_code=status.HTTP_204_NO_CONTENT)
 def delete_blog(blogId:int,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blogId).first()
     if not blog:
@@ -70,7 +73,7 @@ def delete_blog(blogId:int,db:Session = Depends(get_db)):
 
 
 
-@router.put('/update-blog/{blogId}',status_code=status.HTTP_202_ACCEPTED,tags=['Blogs'])
+@router.put('/update/{blogId}',status_code=status.HTTP_202_ACCEPTED)
 def update_blog(blogId:int,req:schemas.Blog,db:Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==blogId)
     if not blog.first():

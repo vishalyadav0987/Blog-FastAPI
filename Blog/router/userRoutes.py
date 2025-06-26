@@ -6,11 +6,14 @@ from sqlalchemy.orm import Session
 from ..hashing import Hash
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/users",
+    tags=["User Routes"]
+)
 
 
 
-@router.post('/create-user',status_code=status.HTTP_201_CREATED,tags=['User'])
+@router.post('/create-user',status_code=status.HTTP_201_CREATED)
 def create_user(req:schemas.User,db:Session = Depends(get_db)):
     hashPassword = Hash.bcrypt(req.password)
     new_user = models.User( name=req.name, email=req.email, password=hashPassword)
@@ -22,7 +25,7 @@ def create_user(req:schemas.User,db:Session = Depends(get_db)):
 
 
 
-@router.get('/user/{userId}',status_code=status.HTTP_200_OK,tags=['User'],response_model=schemas.ResponseModelUser)
+@router.get('/user/{userId}',status_code=status.HTTP_200_OK,response_model=schemas.ResponseModelUser)
 def get_single_blog(userId:int,db:Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == userId).first()
     if not user:
